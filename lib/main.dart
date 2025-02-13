@@ -180,6 +180,9 @@ class ScreenTwo extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Text("THE MANDELORIAN!! is my new fav show to watch with my DOG!!!",
+                    style: TextStyle(fontFamily: 'Calibri',fontWeight: FontWeight.bold ,color: Color.fromRGBO(255, 255, 87,1))
+                ),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);
