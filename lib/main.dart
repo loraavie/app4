@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 void main() {
   runApp(MyApp());
@@ -130,7 +131,239 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 //kalebs screen
-class ScreenOne extends StatelessWidget {
+//class ScreenOne extends StatelessWidget {
+class ScreenOne extends StatefulWidget {
+  @override
+  _ScreenOneState createState() => _ScreenOneState();
+}
+
+class _ScreenOneState extends State<ScreenOne> with TickerProviderStateMixin {
+  //late AnimationController _controller;
+  double _lightX = 150;
+  double _lightY = 300;
+  late AnimationController firstController;
+  late Animation<double> firstAnimation;
+
+  late AnimationController secondController;
+  late Animation<double> secondAnimation;
+
+  late AnimationController thirdController;
+  late Animation<double> thirdAnimation;
+
+  late AnimationController fourthController;
+  late Animation<double> fourthAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    firstController = AnimationController(
+        vsync: this, duration: Duration(milliseconds: 1500));
+    firstAnimation = Tween<double>(begin: 1.9, end: 2.1).animate(
+        CurvedAnimation(parent: firstController, curve: Curves.easeInOut))
+      ..addListener(() {
+        setState(() {});
+      })
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          firstController.reverse();
+        } else if (status == AnimationStatus.dismissed) {
+          firstController.forward();
+        }
+      });
+
+    secondController = AnimationController(
+        vsync: this, duration: Duration(milliseconds: 1500));
+    secondAnimation = Tween<double>(begin: 1.8, end: 2.4).animate(
+        CurvedAnimation(parent: secondController, curve: Curves.easeInOut))
+      ..addListener(() {
+        setState(() {});
+      })
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          secondController.reverse();
+        } else if (status == AnimationStatus.dismissed) {
+          secondController.forward();
+        }
+      });
+
+    thirdController = AnimationController(
+        vsync: this, duration: Duration(milliseconds: 1500));
+    thirdAnimation = Tween<double>(begin: 1.8, end: 2.4).animate(
+        CurvedAnimation(parent: thirdController, curve: Curves.easeInOut))
+      ..addListener(() {
+        setState(() {});
+      })
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          thirdController.reverse();
+        } else if (status == AnimationStatus.dismissed) {
+          thirdController.forward();
+        }
+      });
+
+    fourthController = AnimationController(
+        vsync: this, duration: Duration(milliseconds: 1500));
+    fourthAnimation = Tween<double>(begin: 1.9, end: 2.1).animate(
+        CurvedAnimation(parent: fourthController, curve: Curves.easeInOut))
+      ..addListener(() {
+        setState(() {});
+      })
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          fourthController.reverse();
+        } else if (status == AnimationStatus.dismissed) {
+          fourthController.forward();
+        }
+      });
+
+    Timer(Duration(seconds: 2), () {
+      if (mounted) firstController.forward();
+    });
+
+    Timer(Duration(milliseconds: 1600), () {
+      if (mounted) secondController.forward();
+    });
+
+    Timer(Duration(milliseconds: 800), () {
+      if (mounted) thirdController.forward();
+    });
+
+    if (mounted) fourthController.forward();
+  }
+
+  @override
+  void dispose() {
+    firstController.stop();
+    firstController.dispose();
+    secondController.stop();
+    secondController.dispose();
+    thirdController.stop();
+    thirdController.dispose();
+    fourthController.stop();
+    fourthController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    return Scaffold(
+      appBar: AppBar(title: const Text('Deep Sea Discovery')),
+      backgroundColor: Color(0xff2B2C56),
+      body: Stack(
+        children: [
+          CustomPaint(
+            painter: MyPainter(
+              firstAnimation.value,
+              secondAnimation.value,
+              thirdAnimation.value,
+              fourthAnimation.value,
+            ),
+            child: SizedBox(
+              height: size.height,
+              width: size.width,
+            ),
+          ),
+          Center(
+            child: Text('50%',
+                style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    wordSpacing: 3,
+                    color: Colors.white.withOpacity(.7)),
+                textScaleFactor: 7),
+          ),
+          Positioned(
+            bottom: 80,
+            left: size.width * 0.25,
+            right: size.width * 0.25,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 15),
+                textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              child: Text('Lora\'s page'),
+            ),
+          ),
+          Positioned(
+            bottom: 20,
+            left: size.width * 0.25,
+            right: size.width * 0.25,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ScreenTwo()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 15),
+                textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              child: Text('Amy\'s Screen'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class MyPainter extends CustomPainter {
+  final double firstValue;
+  final double secondValue;
+  final double thirdValue;
+  final double fourthValue;
+
+  MyPainter(
+    this.firstValue,
+    this.secondValue,
+    this.thirdValue,
+    this.fourthValue,
+  );
+  @override
+  void paint(Canvas canvas, Size size) {
+    var paint = Paint()
+      ..color = Color(0xff3B6ABA).withOpacity(.8)
+      ..style = PaintingStyle.fill;
+    var path = Path()
+      ..moveTo(0, size.height / firstValue)
+      ..cubicTo(size.width * .4, size.height / secondValue, size.width * .7,
+          size.height / thirdValue, size.width, size.height / fourthValue)
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height);
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
+  }
+}
+
+class LightPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()
+      ..shader = RadialGradient(
+        colors: [Colors.white.withOpacity(0.8), Colors.transparent],
+        stops: [0.2, 1.0],
+      ).createShader(Rect.fromCircle(
+          center: Offset(size.width / 2, size.height / 2), radius: 100));
+
+    canvas.drawCircle(Offset(size.width / 2, size.height / 2), 100, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
+}
+
+//amys screen
+/*class ScreenTwo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -158,15 +391,15 @@ class ScreenOne extends StatelessWidget {
         ),
       ),
     );
-  }
-}
+  }*/
 
 class ScreenTwo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Amy's Favorite Show Screen"),
-      backgroundColor: Colors.amber),
+      appBar: AppBar(
+          title: Text("Amy's Favorite Show Screen"),
+          backgroundColor: Colors.amber),
       body: Stack(
         children: [
           // Background Image
@@ -181,28 +414,28 @@ class ScreenTwo extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("THE MANDELORIAN!! is my new fav show to watch with my DOG!!!",
-                    style: TextStyle(fontFamily: 'Calibri',fontWeight: FontWeight.bold ,color: Color.fromRGBO(255, 255, 87,1))
-                ),
+                Text(
+                    "THE MANDELORIAN!! is my new fav show to watch with my DOG!!!",
+                    style: TextStyle(
+                        fontFamily: 'Calibri',
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromRGBO(255, 255, 87, 1))),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white
-                  ),
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white),
                   child: Text("Back to Kaleb's Screen"),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.popUntil(context, (route) => route.isFirst);
                   },
-
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
-                      foregroundColor: Colors.white
-                  ),
+                      foregroundColor: Colors.white),
                   child: Text("Back to Lora's Screen"),
                 ),
               ],
