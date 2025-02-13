@@ -245,17 +245,10 @@ class _ScreenOneState extends State<ScreenOne> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      appBar: AppBar(title: const Text('Deep Sea Discovery')),
       backgroundColor: Color(0xff2B2C56),
       body: Stack(
         children: [
-          Center(
-            child: Text('50%',
-                style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    wordSpacing: 3,
-                    color: Colors.white.withOpacity(.7)),
-                textScaleFactor: 7),
-          ),
           CustomPaint(
             painter: MyPainter(
               firstAnimation.value,
@@ -266,6 +259,29 @@ class _ScreenOneState extends State<ScreenOne> with TickerProviderStateMixin {
             child: SizedBox(
               height: size.height,
               width: size.width,
+            ),
+          ),
+          Center(
+            child: Text('50%',
+                style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    wordSpacing: 3,
+                    color: Colors.white.withOpacity(.7)),
+                textScaleFactor: 7),
+          ),
+          Positioned(
+            bottom: 50,
+            left: size.width * 0.25,
+            right: size.width * 0.25,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 15),
+                textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              child: Text('Lora\'s page'),
             ),
           )
         ],
