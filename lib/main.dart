@@ -17,7 +17,20 @@ class MyApp extends StatelessWidget {
 }
 
 //loras screen
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _selectedStars = 0;
+
+  void _setRating(int rating) {
+    setState(() {
+      _selectedStars = rating;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -30,8 +43,10 @@ class HomeScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+            backgroundColor: Colors.black,
             title: Text('Lora\'s Screen',
                 style: TextStyle(
+                  color: Colors.pink,
                   fontSize: 40,
                   fontWeight: FontWeight.bold,
                 ))),
@@ -40,7 +55,10 @@ class HomeScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text('Welcome to Lora\'s Screen',
-                  style: TextStyle(fontSize: 30, color: Colors.white)),
+                  style: TextStyle(
+                      fontSize: 30,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold)),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -54,9 +72,28 @@ class HomeScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 30.0),
                     child: Column(
                       children: [
-                        Text('This is the dog I have in me.'),
-                        ElevatedButton(
-                            onPressed: () {}, child: Text('Star Rating'))
+                        Text(
+                          '<- This is the dog I have in me.',
+                          style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w300),
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: List.generate(5, (index) {
+                            return IconButton(
+                              icon: Icon(
+                                Icons.star,
+                                color: index < _selectedStars
+                                    ? Colors.amber
+                                    : Colors.grey,
+                                size: 40,
+                              ),
+                              onPressed: () => _setRating(index + 1),
+                            );
+                          }),
+                        ),
                       ],
                     ),
                   )
@@ -71,8 +108,7 @@ class HomeScreen extends StatelessWidget {
                 height: 50,
                 child: ElevatedButton(
                   style: const ButtonStyle(
-                      backgroundColor:
-                          WidgetStatePropertyAll(Colors.purpleAccent)),
+                      backgroundColor: WidgetStatePropertyAll(Colors.black)),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -81,7 +117,7 @@ class HomeScreen extends StatelessWidget {
                   },
                   child: Text(
                     'Go to Kaleb\'s Screen',
-                    selectionColor: Colors.white,
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
               ),
