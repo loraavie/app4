@@ -23,23 +23,45 @@ class HomeScreen extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('assets/images/bg2.jpg'),
+          image: AssetImage('images/bg2.jpg'),
           fit: BoxFit.cover,
         ),
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(title: Text('Lora\'s Screen')),
+        appBar: AppBar(
+            title: Text('Lora\'s Screen',
+                style: TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                ))),
         body: Column(
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text('Welcome to Lora\'s Screen',
-                  style: TextStyle(fontSize: 20)),
+                  style: TextStyle(fontSize: 30, color: Colors.white)),
             ),
-            Image.asset(
-              'assets/images/dog.webp',
-              height: 400,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                children: [
+                  Image.asset(
+                    'assets/images/dog.webp',
+                    height: 350,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                    child: Column(
+                      children: [
+                        Text('This is the dog I have in me.'),
+                        ElevatedButton(
+                            onPressed: () {}, child: Text('Star Rating'))
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
             Expanded(child: Container()),
             Padding(
