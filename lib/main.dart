@@ -188,12 +188,21 @@ class ScreenTwo extends StatelessWidget {
                   onPressed: () {
                     Navigator.pop(context);
                   },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white
+                  ),
                   child: Text("Back to Kaleb's Screen"),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.popUntil(context, (route) => route.isFirst);
                   },
+
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white
+                  ),
                   child: Text("Back to Lora's Screen"),
                 ),
               ],
