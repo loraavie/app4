@@ -165,7 +165,7 @@ class ScreenTwo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Amy's Screen")),
+      appBar: AppBar(title: Text("Amy's Favorite Show Screen")),
       body: Stack(
         children: [
           // Background Image
