@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'dart:async';
+import 'dart:math';
 
 void main() {
   runApp(MyApp());
@@ -172,9 +173,15 @@ class ScreenOne extends StatefulWidget {
 }
 
 class _ScreenOneState extends State<ScreenOne> with TickerProviderStateMixin {
-  //late AnimationController _controller;
   double _lightX = 150;
   double _lightY = 300;
+  late Offset _dragStartOffset;
+  late ValueNotifier<Offset> _lightPosition;
+
+  final double _fishX = 200;
+  final double _fishY = 500;
+  final double _revealDistance = 100;
+
   late AnimationController firstController;
   late Animation<double> firstAnimation;
   late AnimationController secondController;
@@ -186,72 +193,35 @@ class _ScreenOneState extends State<ScreenOne> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    firstController = AnimationController(
-        vsync: this, duration: Duration(milliseconds: 1500));
+    _lightPosition = ValueNotifier(Offset(_lightX, _lightY));
+
+    firstController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 1500))
+          ..repeat(reverse: true);
     firstAnimation = Tween<double>(begin: 1.9, end: 2.1).animate(
-        CurvedAnimation(parent: firstController, curve: Curves.easeInOut))
-      ..addListener(() {
-        setState(() {});
-      })
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          firstController.reverse();
-        } else if (status == AnimationStatus.dismissed) {
-          firstController.forward();
-        }
-      });
-    secondController = AnimationController(
-        vsync: this, duration: Duration(milliseconds: 1500));
+      CurvedAnimation(parent: firstController, curve: Curves.easeInOut),
+    );
+
+    secondController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 1500))
+          ..repeat(reverse: true);
     secondAnimation = Tween<double>(begin: 1.8, end: 2.4).animate(
-        CurvedAnimation(parent: secondController, curve: Curves.easeInOut))
-      ..addListener(() {
-        setState(() {});
-      })
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          secondController.reverse();
-        } else if (status == AnimationStatus.dismissed) {
-          secondController.forward();
-        }
-      });
-    thirdController = AnimationController(
-        vsync: this, duration: Duration(milliseconds: 1500));
+      CurvedAnimation(parent: secondController, curve: Curves.easeInOut),
+    );
+
+    thirdController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 1500))
+          ..repeat(reverse: true);
     thirdAnimation = Tween<double>(begin: 1.8, end: 2.4).animate(
-        CurvedAnimation(parent: thirdController, curve: Curves.easeInOut))
-      ..addListener(() {
-        setState(() {});
-      })
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          thirdController.reverse();
-        } else if (status == AnimationStatus.dismissed) {
-          thirdController.forward();
-        }
-      });
-    fourthController = AnimationController(
-        vsync: this, duration: Duration(milliseconds: 1500));
+      CurvedAnimation(parent: thirdController, curve: Curves.easeInOut),
+    );
+
+    fourthController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 1500))
+          ..repeat(reverse: true);
     fourthAnimation = Tween<double>(begin: 1.9, end: 2.1).animate(
-        CurvedAnimation(parent: fourthController, curve: Curves.easeInOut))
-      ..addListener(() {
-        setState(() {});
-      })
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          fourthController.reverse();
-        } else if (status == AnimationStatus.dismissed) {
-          fourthController.forward();
-        }
-      });
-    Timer(Duration(seconds: 2), () {
-      firstController.forward();
-    });
-    Timer(Duration(milliseconds: 1600), () {
-      secondController.forward();
-    });
-    Timer(Duration(milliseconds: 800), () {
-      thirdController.forward();
-    });
-    fourthController.forward();
+      CurvedAnimation(parent: fourthController, curve: Curves.easeInOut),
+    );
   }
 
   @override
@@ -260,37 +230,109 @@ class _ScreenOneState extends State<ScreenOne> with TickerProviderStateMixin {
     secondController.dispose();
     thirdController.dispose();
     fourthController.dispose();
+    _lightPosition.dispose();
     super.dispose();
+  }
+
+  bool isFishVisible(Offset lightPos) {
+    double distance =
+        sqrt(pow(lightPos.dx - _fishX, 2) + pow(lightPos.dy - _fishY, 2));
+    return distance < _revealDistance;
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Deep Sea Discovery')),
       backgroundColor: Color(0xff2B2C56),
       body: Stack(
         children: [
-          CustomPaint(
-            painter: MyPainter(
-              firstAnimation.value,
-              secondAnimation.value,
-              thirdAnimation.value,
-              fourthAnimation.value,
-            ),
-            child: SizedBox(
-              height: size.height,
-              width: size.width,
-            ),
+          // Water Animation
+          AnimatedBuilder(
+            animation: Listenable.merge([
+              firstController,
+              secondController,
+              thirdController,
+              fourthController
+            ]),
+            builder: (context, child) {
+              return CustomPaint(
+                painter: MyPainter(firstAnimation.value, secondAnimation.value,
+                    thirdAnimation.value, fourthAnimation.value),
+                child: SizedBox(height: size.height, width: size.width),
+              );
+            },
           ),
-          Center(
-            child: Text('50%',
-                style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    wordSpacing: 3,
-                    color: Colors.white.withOpacity(.7)),
-                textScaleFactor: 7),
+
+          // Light Effect Layer
+          ValueListenableBuilder(
+            valueListenable: _lightPosition,
+            builder: (context, Offset pos, child) {
+              return Positioned.fill(
+                child: CustomPaint(
+                  painter: LightPainter(pos.dx, pos.dy),
+                ),
+              );
+            },
           ),
+
+          // Anglerfish (Hidden Until Light is Near)
+          ValueListenableBuilder(
+            valueListenable: _lightPosition,
+            builder: (context, Offset pos, child) {
+              bool visible = isFishVisible(pos);
+              return Positioned(
+                left: _fishX - 40,
+                top: _fishY - 40,
+                child: AnimatedOpacity(
+                  opacity: visible ? 1.0 : 0.0,
+                  duration: Duration(milliseconds: 300),
+                  child: Image.asset(
+                    'assets/images/blue-eyed-anglerfish.jpg',
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              );
+            },
+          ),
+
+          // Draggable Light Source
+          ValueListenableBuilder(
+            valueListenable: _lightPosition,
+            builder: (context, Offset pos, child) {
+              return Positioned(
+                left: pos.dx - 25,
+                top: pos.dy - 25,
+                child: GestureDetector(
+                  onPanStart: (details) {
+                    _dragStartOffset = Offset(
+                        details.globalPosition.dx - pos.dx,
+                        details.globalPosition.dy - pos.dy);
+                  },
+                  onPanUpdate: (details) {
+                    _lightPosition.value = Offset(
+                      details.globalPosition.dx - _dragStartOffset.dx,
+                      details.globalPosition.dy - _dragStartOffset.dy,
+                    );
+                  },
+                  child: Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.yellow.withOpacity(0.8),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+
+          // 📌 Back & Forward Buttons (Now Fixed)
           Positioned(
             bottom: 80,
             left: size.width * 0.25,
@@ -299,13 +341,10 @@ class _ScreenOneState extends State<ScreenOne> with TickerProviderStateMixin {
               onPressed: () {
                 Navigator.pop(context);
               },
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 15),
-                textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              child: Text('Lora\'s page'),
+              child: Text('Back to Home'),
             ),
           ),
+
           Positioned(
             bottom: 20,
             left: size.width * 0.25,
@@ -317,11 +356,7 @@ class _ScreenOneState extends State<ScreenOne> with TickerProviderStateMixin {
                   MaterialPageRoute(builder: (context) => ScreenTwo()),
                 );
               },
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 15),
-                textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              child: Text('Amy\'s Screen'),
+              child: Text('Go to Amy\'s Screen'),
             ),
           ),
         ],
@@ -330,25 +365,23 @@ class _ScreenOneState extends State<ScreenOne> with TickerProviderStateMixin {
   }
 }
 
+// Water Effect Painter
 class MyPainter extends CustomPainter {
   final double firstValue;
   final double secondValue;
   final double thirdValue;
   final double fourthValue;
   MyPainter(
-    this.firstValue,
-    this.secondValue,
-    this.thirdValue,
-    this.fourthValue,
-  );
+      this.firstValue, this.secondValue, this.thirdValue, this.fourthValue);
+
   @override
   void paint(Canvas canvas, Size size) {
     var paint = Paint()
-      ..color = Color(0xff3B6ABA).withOpacity(.8)
+      ..color = Color(0xff3B6ABA).withOpacity(0.8)
       ..style = PaintingStyle.fill;
     var path = Path()
       ..moveTo(0, size.height / firstValue)
-      ..cubicTo(size.width * .4, size.height / secondValue, size.width * .7,
+      ..cubicTo(size.width * 0.4, size.height / secondValue, size.width * 0.7,
           size.height / thirdValue, size.width, size.height / fourthValue)
       ..lineTo(size.width, size.height)
       ..lineTo(0, size.height);
@@ -356,21 +389,24 @@ class MyPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
-  }
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
 
+// Light Effect Painter
 class LightPainter extends CustomPainter {
+  final double x;
+  final double y;
+  LightPainter(this.x, this.y);
+
   @override
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()
       ..shader = RadialGradient(
-        colors: [Colors.white.withOpacity(0.8), Colors.transparent],
-        stops: [0.2, 1.0],
-      ).createShader(Rect.fromCircle(
-          center: Offset(size.width / 2, size.height / 2), radius: 100));
-    canvas.drawCircle(Offset(size.width / 2, size.height / 2), 100, paint);
+        colors: [Colors.white.withOpacity(0.6), Colors.transparent],
+        stops: [0.0, 1.0],
+      ).createShader(Rect.fromCircle(center: Offset(x, y), radius: 100));
+
+    canvas.drawCircle(Offset(x, y), 100, paint);
   }
 
   @override
