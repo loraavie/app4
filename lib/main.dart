@@ -292,7 +292,7 @@ class _ScreenOneState extends State<ScreenOne> with TickerProviderStateMixin {
                 textScaleFactor: 7),
           ),
           Positioned(
-            bottom: 50,
+            bottom: 80,
             left: size.width * 0.25,
             right: size.width * 0.25,
             child: ElevatedButton(
@@ -305,7 +305,25 @@ class _ScreenOneState extends State<ScreenOne> with TickerProviderStateMixin {
               ),
               child: Text('Lora\'s page'),
             ),
-          )
+          ),
+          Positioned(
+            bottom: 20,
+            left: size.width * 0.25,
+            right: size.width * 0.25,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ScreenTwo()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 15),
+                textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              child: Text('Amy\'s Screen'),
+            ),
+          ),
         ],
       ),
     );
