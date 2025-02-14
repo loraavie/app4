@@ -360,14 +360,9 @@ class LightPainter extends CustomPainter {
 }
 
 class ScreenTwo extends StatelessWidget {
-  const ScreenTwo({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          title: Text("Amy's Favorite Show Screen"),
-          backgroundColor: Colors.amber),
       appBar: AppBar(
           title: Text("Amy's Favorite Show Screen"),
           backgroundColor: Colors.amber),
@@ -391,19 +386,11 @@ class ScreenTwo extends StatelessWidget {
                         fontFamily: 'Calibri',
                         fontWeight: FontWeight.bold,
                         color: Color.fromRGBO(255, 255, 87, 1))),
-                Text(
-                    "THE MANDELORIAN!! is my new fav show to watch with my DOG!!!",
-                    style: TextStyle(
-                        fontFamily: 'Calibri',
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromRGBO(255, 255, 87, 1))),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white),
                       backgroundColor: Colors.green,
                       foregroundColor: Colors.white),
                   child: Text("Back to Kaleb's Screen"),
@@ -414,7 +401,6 @@ class ScreenTwo extends StatelessWidget {
                   },
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
-                      foregroundColor: Colors.white),
                       foregroundColor: Colors.white),
                   child: Text("Back to Lora's Screen"),
                 ),
